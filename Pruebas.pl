@@ -1,42 +1,76 @@
+treboles('1☘').
+treboles('2☘').
+treboles('3☘').
+treboles('4☘').
+treboles('5☘').
+treboles('6☘').
+treboles('7☘').
+treboles('8☘').
+treboles('9☘').
+treboles('10☘').
+treboles('11☘').
+treboles('12☘').
+treboles('13☘').
 
-%de(1,Treboles).
-%de(1,corazones).
-%de(1,picas).
-%de(2,Treboles).
-%de(2,corazones).
-%de(2,picas).
-%de(3,Treboles).
-%de(3,corazones).
-%de(3,picas).
+picas('1♠').
+picas('2♠').
+picas('3♠').
+picas('4♠').
+picas('5♠').
+picas('6♠').
+picas('7♠').
+picas('8♠').
+picas('9♠').
+picas('10♠').
+picas('11♠').
+picas('12♠').
+picas('13♠').
 
-corazones(1).
-corazones(2).
-corazones(3).
+diamantes('1♦').
+diamantes('2♦').
+diamantes('3♦').
+diamantes('4♦').
+diamantes('5♦').
+diamantes('6♦').
+diamantes('7♦').
+diamantes('8♦').
+diamantes('9♦').
+diamantes('10♦').
+diamantes('11♦').
+diamantes('12♦').
+diamantes('13♦').
 
-diamantes(1).
-diamantes(2).
-diamantes(3).
+corazones('1♥').
+corazones('2♥').
+corazones('3♥').
+corazones('4♥').
+corazones('5♥').
+corazones('6♥').
+corazones('7♥').
+corazones('8♥').
+corazones('9♥').
+corazones('10♥').
+corazones('11♥').
+corazones('12♥').
+corazones('13♥').
 
-%checar:- 1=:=1.
+palo(corazones).
+palo(treboles).
+palo(diamantes).
+palo(picas).
 
-%main:-  ,
-%        write('Hola mundo'),
-%        nl,
-        %write('escribe el numero de integrantes'),
-        %nl,
-        %read(Integrantes),
-        %random(1,3,X),
-        %answer(Integrantes,Treboles).
+sonnegras(X):- picas(X) ; treboles(X).
+sonrojas(Y):- diamantes(Y) ; corazones(Y).
 
-answer():- Treboles = ['4☘','5☘','6☘','7☘','8☘','9☘'], 
-           write(random_member(1,Treboles)),
-           write(random_member(2,Treboles)),nl,
-           write(random_member(3,Treboles)),nl,
-           write(random_member(4,Treboles)),nl.
-
-
-generar_random():- random(1,6,X),random(1,6,Y),Y=\=X,
-        write(Y),
-        write(X).
-
-%member(Integrantes,Treboles)
+answer():-	Cartas = [
+					'1☘','2☘','3☘','4☘','5☘','6☘','7☘','8☘','9☘','10☘','11☘','12☘','13☘',
+					'1♠','2♠','3♠','4♠','5♠','6♠','7♠','8♠','9♠','10♠','11♠','12♠','13♠',
+					'1♦','2♦','3♦','4♦','5♦','6♦','7♦','8♦','9♦','10♦','11♦','12♦','13♦',
+					'1♥','2♥','3♥','4♥','5♥','6♥','7♥','8♥','9♥','10♥','11♥','12♥','13♥'
+				],
+				randseq(5,52,L),
+				
+            nth0(nth0(1,L,Y),Cartas,X),
+				write(X).
+%crear_random(X):- random(0,10,Z),
+%						Z\==X, write(Z) ; write(Z), crear_random(X).
