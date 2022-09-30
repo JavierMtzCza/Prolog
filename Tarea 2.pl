@@ -6,11 +6,15 @@ contiene_numero([_|Resto]):- contiene_numero(Resto).
 inserta_ceros([],[]).
 inserta_ceros([X|Resto],[X,0|Resto2]):- inserta_ceros(Resto,Resto2).
 
-/*
-rota([],N,[]).
-rota([X],N,[X]).
-rota([X|Resto],N,[Y|Resto2]):- N > 0, N1 is N-1 , rota(Resto,N1,[Y|Resto2])   
-*/
+%%%%%%%%%%%% ---------------Problema 3
+
+rotar(_,0,_):- !.
+rotar(Lista,N,Res):- N>0,
+							nth0(0,Lista, Elem, Resto),
+							inserta_final(Elem,Resto,L1),
+							N2 is N-1,
+							rotar(L1,N2,L1),
+							Res=L1.
 
 %%%%%%%%%%%% ---------------Problema 5
 inserta0_en(_,[],N,[]):-number(N).
@@ -24,10 +28,21 @@ promedio_parcial(Lista,N,Respuesta):-   filtrar_numeros(Lista , Lista_sin_letras
                                         subtract(Lista_sin_letras , Sub_lista , _ ), 
                                         sum_list(Sub_lista , Suma ), 
                                         Respuesta is Suma // N.
-
+                                    
 filtrar_numeros([],[]).
 filtrar_numeros([X|Resto],[X|Num]):- number(X), filtrar_numeros(Resto,Num).
 filtrar_numeros([X|Resto],Num):- \+number(X), filtrar_numeros(Resto,Num).
+
+%%%%%%%%%%%% ---------------Problema 7
+
+fibonacci(N,N):- N<2, N>=0.
+fibonacci(N,Res):- N>=2, N1 is N-1, N2 is N-2, fibonacci(N1,R1), fibonacci(N2,R2), Res is R1+R2.
+
+%%%%%%%%%%%% ---------------Problema 8
+
+simplifica([],[]).
+simplifica([X|Ys],Zs) :- member(X,Ys), simplifica(Ys,Zs),!.
+simplifica([X|Ys],[X|Zs]) :- \+(member(X,Ys)), simplifica(Ys,Zs).
 
 %%%%%%%%%%%% ---------------Problema 10
 
@@ -47,12 +62,8 @@ vocales([X|Resto],Vocales):- \+(X = a ; X = e ; X = i ; X = o ; X = u ), vocales
 
 %%%%%%%%%%%% ---------------Problema 13
 
-par([],[]).
-par([X|Resto],[Y|Vocales]):- (), vocales(Resto,Vocales).
-par([X|Resto],Vocales):- \+(), vocales(Resto,Vocales).
-
-es_par(_,K,Max,_):- K >= Max, !.
-es_par(Lista,K,Max,[K|Res]):- K > 0, K<Max, K2 is K+2, es_par(Lista,K2,Max,Res).
+dos([],[]).
+dos([H|T],[H|T2]):- length(R1,2),subtract([H|T],R1,T1),dos(T1,T2).
 
 %%%%%%%%%%%% ---------------Problema 15
 particiona(Lista,N,L1,L2):- length(Lista, Length), N2 is N-1, N2 = Length,
