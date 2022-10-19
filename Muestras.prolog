@@ -33,3 +33,17 @@
 %% PARTIR UNA LISTA EN 2
     particiona(Lista2,0,[],Lista2).
     particiona([X|Resto],N,[X|Lista1],Lista2) :- N > 0, N1 is N - 1, particiona(Resto,N1,Lista1,Lista2).
+
+sumar_tiempos([_,_],7).
+sumar_tiempos([X,Y,Z|Resto],Suma):- sigue(X,Y,Línea1),sigue(Y,Z,Línea2), 
+                                    Línea1 \== Línea2,
+                                    sumar_tiempos([Y,Z|Resto],Suma1),
+                                    ( transborde(Y,R) -> Suma#=(5*R)+10+Suma1 ; Suma#=(5*2)+Suma1 ).
+sumar_tiempos([X,Y,Z|Resto],Suma):- sigue(X,Y,Línea1),sigue(Y,Z,Línea2), 
+                                    Línea1 == Línea2,
+                                    sumar_tiempos([Y,Z|Resto],Suma1),
+                                    ( transborde(Y,R) -> Suma#=(5*R)+Suma1 ; Suma#=(5*2)+Suma1 ).
+
+buscar_rutas(A,B,R):-ir(A,B,[A,B|[]],R).
+ir(A,B,_,[A,B]):- sigue(A,B,_).
+ir(A,B,Memoria,[A|Ruta]):-  A \== B,sigue(A,Z,_),Z \== B,\+member(Z,Memoria),ir(Z,B,[Z|Memoria],Ruta).
