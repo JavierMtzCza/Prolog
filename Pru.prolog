@@ -95,6 +95,9 @@ listar_tiempos([_-T|Resto],[T|Tiempos]):- listar_tiempos(Resto,Tiempos).
 
 despliega():-busca_BFS(Ruta_final),
                 Ruta-Tiempo = Ruta_final,
+ format('exito!!!  ruta encontrada en ~d intentos ~n',[Tiempo]),
+Length(Ruta, Longitud),
+format('ruta con ~d pasos ~n',[Longitud]),
                 imprime(Ruta,1).
             
 
