@@ -44,9 +44,13 @@ sucesores([Estado|Resto],Sucesores):-findall([S,Estado|Resto],
                                             Sucesores ).
 
 %% ----------------------------------------------- DFS -------------------------------------------
-busca_DFS(Rutas):-findall(Ruta-Intentos,
+busca_DFS(Ruta_final):-findall(Ruta-Intentos,
                         (dfs([0,0,3,3,d],0,Intentos,[[[3,3,0,0,o]]],R),reverse(R,Ruta))
-                        ,Rutas).
+                        ,Rutas),
+                        listar_tiempos(Rutas,Tiempos),
+                        min_list(Tiempos,Num),
+                        nth1(Index,Tiempos,Num),
+                        nth1(Index,Rutas,Ruta_final).
 %busca_DFS():- dfs([0,0,3,3,d],0,Intentos,[[[3,3,0,0,o]]],M),
 %              reverse(M, Movimientos),
 %              write(Intentos),
@@ -93,12 +97,19 @@ ruta(Inicio,Cuenta,Intentos,Estado_meta,[Estado_meta|Ruta]):-Cuenta2 is Cuenta+1
 listar_tiempos([],[]).
 listar_tiempos([_-T|Resto],[T|Tiempos]):- listar_tiempos(Resto,Tiempos).
 
-despliega():-busca_BFS(Ruta_final),
-                Ruta-Tiempo = Ruta_final,
- format('exito!!!  ruta encontrada en ~d intentos ~n',[Tiempo]),
+despliega():-busca_BFS(Ruta_final_BFS),
+                Ruta-Tiempo = Ruta_final_BFS,
+format('exito en ruta BFS!!!  ruta encontrada en ~d intentos ~n',[Tiempo]),
 Length(Ruta, Longitud),
 format('ruta con ~d pasos ~n',[Longitud]),
-                imprime(Ruta,1).
+imprime(Ruta,1),
+                busca_DFS(Ruta_final_DFS),
+                Ruta-Tiempo = Ruta_final_DFS,
+format('exito en ruta DFS!!!  ruta encontrada en ~d intentos ~n',[Tiempo]),
+Length(Ruta, Longitud),
+format('ruta con ~d pasos ~n',[Longitud]),
+imprime(Ruta,1).
+
             
 
 imprime([R1,R2],Tramo):-tipo(R1,R2,Tipo),
