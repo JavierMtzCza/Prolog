@@ -57,7 +57,8 @@ tipo([MO,CO,MD,Cd,L1],[MO2,CO2,MD2,Cd2,L2],Tipo):-
 %---------------
 sucesores([Estado|Resto],Sucesores):-findall([S,Estado|Resto], 
                                             (movimiento(Estado,S), \+member(S,[Estado|Resto])),
-                                            Sucesores ).
+                                            Sucesores ),
+                                        print_term(Sucesores,[]).
 %--------------- 
 % busca_DFS/3. Obtener las rutas para resolver el problema de misioneros y caníbales usando búsqueda a lo profundo.
 %     busca_DFS( +Estado_inicial, +Estado_meta, -Plan).
