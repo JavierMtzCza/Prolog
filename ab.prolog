@@ -1,47 +1,63 @@
 :-consult("g.prolog").
+:-dynamic(lista/1).
+:-retractall(lista(_)).
+:-assert(lista([])).
 
-alpha_beta(Tablero,Jugador,Limite,Evaluacion):- once(ab_minimax(Tablero,Jugador,Limite,-100,100,Evaluacion)).
+%--------------- 
+% alpha_beta/0. Elegir la mejor jugada con el algoritmo de min-max combinado con podas alpha-beta.
+%     alpha_beta().
+%       
+%       Explicación: Verdadero se elige la jugada con mas ventaja hasta cierto horizonte. 
+%---------------
+alpha_beta():-retractall(lista(_)),assert(lista([])),
+                tablero_global(Tablero),horizonte(Horizonte), 
+                ab_minimax(Tablero,2,Horizonte,-100,100,Evaluación),
+                once((juego((Tablero,2),Jugada),lista(L),member(Jugada-Evaluación,L))),
+                retractall(tablero_global(_)),assert(tablero_global(Jugada)).
 
-%Casos en donde llegamos al limite de busqueda y verificamos si el estado es ganador o empate o sino evaluamos
-ab_minimax( Tablero,Jugador,0,_,_,Evaluacion ):-( gano(Tablero,1) -> Evaluacion is -15 ;
-                                                    (gano(Tablero,2) -> Evaluacion is 15; 
-                                                        empate(Tablero,Jugador) -> Evaluacion is 0 ;
-                                                            evaluar(Tablero,Evaluacion)
+%Casos en donde llegamos al limite de búsqueda y verificamos si el estado es ganador o empate, sino evaluamos.
+ab_minimax( Tablero,Jugador,0,_,_,Evaluación ):-( gano(Tablero,1) -> Evaluación is -15 ;
+                                                    (gano(Tablero,2) -> Evaluación is 15; 
+                                                        empate(Tablero,Jugador) -> Evaluación is 0 ;
+                                                            evaluar(Tablero,Evaluación)
                                                     )      
-                                                ).
+                                                ),guardar(Tablero-Evaluación).
+%Casos en donde NO hemos llegado limite de búsqueda y verificamos si el estado es ganador o empate.
+ab_minimax( Tablero,_,N,_,_,Evaluación ):- N>0, gano(Tablero,1), Evaluación is -15,guardar(Tablero-Evaluación).
+ab_minimax( Tablero,_,N,_,_,Evaluación ):- N>0, gano(Tablero,2), Evaluación is 15,guardar(Tablero-Evaluación).
+ab_minimax( Tablero,Jugador,N,_,_,Evaluación ):- N>0, empate(Tablero,Jugador), Evaluación is 0,guardar(Tablero-Evaluación).
 
-%Casos en donde NO hemos llegado limite de busqueda y verificamos si el estado es ganador o empate.
-ab_minimax( Tablero,_,N,_,_,Evaluacion ):- N>0, gano(Tablero,1), Evaluacion is -15.
-ab_minimax( Tablero,_,N,_,_,Evaluacion ):- N>0, gano(Tablero,2), Evaluacion is 15.
-ab_minimax( Tablero,Jugador,N,_,_,Evaluacion ):- N>0, empate(Tablero,Jugador), Evaluacion is 0.
-
-ab_minimax( Tablero,Jugador,N,Alpha,Beta,Evaluacion ):- N>0,Jugador=2,\+(gano(Tablero,1)),\+(gano(Tablero,2)),\+(empate(Tablero,Jugador)),
+ab_minimax( Tablero,Jugador,N,Alpha,Beta,Evaluación):- N>0,Jugador=2,\+(gano(Tablero,1)),\+(gano(Tablero,2)),\+(empate(Tablero,Jugador)),
                                                         posibles_jugadas((Tablero,Jugador),(Jugadas,NuevoJugador)), 
-                                                        N2 is N-1, ab_max_children( Jugadas, NuevoJugador, N2, Alpha, Beta, -100 ,Evaluacion ).
+                                                        N2 is N-1, ab_max_children( Jugadas,NuevoJugador,N2,Alpha,Beta,-100,Evaluación),
+                                                        guardar(Tablero-Evaluación).
 
-ab_minimax( Tablero,Jugador,N,Alpha,Beta,Evaluacion ):- N>0,Jugador=1,\+(gano(Tablero,1)),\+(gano(Tablero,2)),\+(empate(Tablero,Jugador)),
+ab_minimax( Tablero,Jugador,N,Alpha,Beta,Evaluación):- N>0,Jugador=1,\+(gano(Tablero,1)),\+(gano(Tablero,2)),\+(empate(Tablero,Jugador)),
                                                         posibles_jugadas((Tablero,Jugador),(Jugadas,NuevoJugador)),
-                                                        N2 is N-1, ab_min_children( Jugadas, NuevoJugador, N2, Alpha, Beta, 100,Evaluacion ).
+                                                        N2 is N-1, ab_min_children( Jugadas,NuevoJugador,N2,Alpha,Beta, 100,Evaluación),
+                                                        guardar(Tablero-Evaluación).
 
 ab_max_children( [],_ ,_ ,_ , _,Max,Max).
-ab_max_children( [Child|Children],Jugador,N,Alpha,Beta,MaxO,Max ):- ab_minimax( Child,Jugador,N,Alpha,Beta,Evaluacion),
-                                                                    ( greater(Evaluacion,Beta) -> 
-                                                                        Max = Beta % Poda
-                                                                        ; 
-                                                                        ab_max( Evaluacion, Alpha, AlphaO ), % Actualizacion de Alpha
-                                                                        ab_max( Evaluacion, MaxO, Max1 ),   % Actualizacion del valor maximo
-                                                                        ab_max_children(Children, Jugador, N, AlphaO, Beta, Max1, Max ) 
-                                                                    ).
+ab_max_children( [Child|Children],Jugador,N,Alpha,Beta,MaxO,Max):- ab_minimax( Child,Jugador,N,Alpha,Beta,Evaluación),
+                                                                ( greater(Evaluación,Beta) -> 
+                                                                    Max = Beta % Poda
+                                                                    ; 
+                                                                    ab_max( Evaluación, Alpha, AlphaO ), % Actualización de Alpha
+                                                                    ab_max( Evaluación, MaxO, Max1 ),   % Actualización del valor máximo
+                                                                    ab_max_children(Children,Jugador,N,AlphaO,Beta,Max1,Max) 
+                                                                ).
 
 ab_min_children( [],_ ,_ ,_ , _, Min,Min).
-ab_min_children( [Child|Children],Jugador,N,Alpha,Beta,MinO,Min ):- ab_minimax( Child,Jugador,N,Alpha,Beta,Evaluacion ),
-                                                                    ( greater( Alpha, Evaluacion ) -> 
-                                                                        Min = Alpha % Poda
-                                                                        ; 
-                                                                        ab_min( Evaluacion, Beta, BetaO ), % Actualizacion de Beta
-                                                                        ab_min( Evaluacion, MinO, Min1 ),   % Actualizacion del valor minimo
-                                                                        ab_min_children( Children, Jugador, N, Alpha, BetaO, Min1, Min ) 
-                                                                    ).
+ab_min_children( [Child|Children],Jugador,N,Alpha,Beta,MinO,Min):- ab_minimax( Child,Jugador,N,Alpha,Beta,Evaluación),
+                                                                ( greater( Alpha, Evaluación ) -> 
+                                                                    Min = Alpha % Poda
+                                                                    ; 
+                                                                    ab_min( Evaluación, Beta, BetaO ), % Actualización de Beta
+                                                                    ab_min( Evaluación, MinO, Min1 ),   % Actualización del valor mínimo
+                                                                    ab_min_children( Children,Jugador,N,Alpha,BetaO,Min1,Min) 
+                                                                ).
+
+guardar(Estado-Val):-lista(L), append(L,[Estado-Val],R),retractall(lista(_)),assert(lista(R)).
 
 ab_max(X,Y,Z):- greater(Y,X),!,Z=Y.
 ab_max(X,_,X).
