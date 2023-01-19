@@ -9,7 +9,11 @@
 %                               iniciar_juego(2) baja posibilidad de ganar
 %                               iniciar_juego(3) casi nula posibilidad de ganar
 %               NO se recomienda un horizonte mas grande, de lo contrario tardaría mas y consumiría mas recursos.
+%   
+%   Modo de compilar: E código esta separado en dos archivos, "algoritmo_alpha_beta.prolog" y "Tarea 7.prolog" usar consult("Tarea 7.prolog").
+%                       Ya que con solo consultar este archivo de manera simultanea consultara el algoritmo alpha-beta.
 %=========================================================================
+:-consult("algoritmo_alpha_beta.prolog").
 %----
 :-dynamic(tablero_global/1).
 :-retractall(tablero_global(_)).
@@ -25,8 +29,8 @@ siguiente_turno(1,2).
 siguiente_turno(2,1).
 
 %--------------- 
-% iniciar_juego/1. Iniciar un juego con la maquina con cierto horizonte.
-%     iniciar_juego(+Horizonte).
+% inicia_juego/1. Iniciar un juego con la maquina con cierto horizonte.
+%     inicia_juego(+Horizonte).
 %       
 %       Explicación: Verdadero si se inicia un juego con la maquina hasta que alguno de los dos gane o se llegue a un empate.
 %       Forma de uso:   iniciar_juego(1) media posibilidad de ganar
@@ -34,7 +38,7 @@ siguiente_turno(2,1).
 %                       iniciar_juego(3) casi nula posibilidad de ganar
 %       NO se recomienda un horizonte mas grande, de lo contrario tardaría mas y consumiría mas recursos.
 %---------------
-iniciar_juego(Horizonte):- retractall(tablero_global(_)),assert(tablero_global([[-,-,-,-],[-,-,-,-],[-,-,-,-],[-,-,-,-]])),
+inicia_juego(Horizonte):- retractall(tablero_global(_)),assert(tablero_global([[-,-,-,-],[-,-,-,-],[-,-,-,-],[-,-,-,-]])),
                         retractall(horizonte(_)),assert(horizonte(Horizonte)),jugando().
 %--------------- 
 % posibles_jugadas/4. Obtener las jugadas posibles de un jugador con el tablero actual.
